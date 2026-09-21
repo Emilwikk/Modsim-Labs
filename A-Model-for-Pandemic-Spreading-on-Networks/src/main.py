@@ -15,7 +15,7 @@ days = 5
 t_span_rdIS = [0,days*seconds_per_day] # seconds
 y0_rdIS = [20,20] # I,S
 
-mu = 1e-6   # Recovery rate [s^-1]
+mu = 2e-6   # Recovery rate [s^-1]
 beta = 1e-6  # Infection rate [s^-1]
 
 sol = solve_ivp(
