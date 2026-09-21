@@ -14,25 +14,20 @@ fig_dir.mkdir(parents=True, exist_ok=True)
 t_span_rdIS = [0,config.days_simulated*config.seconds_per_day] # seconds
 y0_rdIS = [config.initial_infected,config.initial_susceptible]
 
-sol = solve_ivp(
-    fun=utils.reaction_diffusion_IS,
-    t_span=t_span_rdIS,
-    y0=y0_rdIS,
-    method='Radau', # The goat
-    args=(config.mu,config.beta),
-    dense_output=True
-)
+# Creates pairs of mus and betas, not all possible combos
+for mu, beta in zip(config.mus, config.betas): 
+    sol = solve_ivp(
+        fun=utils.reaction_diffusion_IS,
+        t_span=t_span_rdIS,
+        y0=y0_rdIS,
+        method='Radau', # The goat
+        args=(mu,beta),
+        dense_output=True
+    )
 
-# For plotting
-t = np.linspace(t_span_rdIS[0], t_span_rdIS[1], 1000)
-y = sol.sol(t)
+    # For plotting
+    t = np.linspace(t_span_rdIS[0], t_span_rdIS[1], 1000)
+    y = sol.sol(t)
 
-plt.figure()
-plt.title("Disease Spreading Simulation")
-plt.plot(t/config.seconds_per_day,y[0]/(y[0]+y[1]),label='# Infected')
-plt.plot(t/config.seconds_per_day,y[1]/(y[0]+y[1]), label='# Susceptible')
-plt.legend()
-plt.grid()
-plt.xlabel("Time [Days]")
-plt.ylabel("Relative Population")
-plt.savefig(fig_dir / "fig.png")
+    utils.plot_sim1(t,y,mu,beta,spd=config.seconds_per_day, fig_dir=fig_dir, show_plots=config.SHOW_PLOTS)
+
