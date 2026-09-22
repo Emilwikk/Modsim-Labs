@@ -14,8 +14,13 @@ fig_dir.mkdir(parents=True, exist_ok=True)
 t_span_rdIS = [0,config.days_simulated*config.seconds_per_day] # seconds
 y0_rdIS = [config.initial_infected,config.initial_susceptible]
 
+mus_seconds = np.array(config.mus)/config.seconds_per_day
+betas_seconds = np.array(config.betas)/config.seconds_per_day
+
+print(zip(mus_seconds, betas_seconds))
+
 # Creates pairs of mus and betas, not all possible combos
-for mu, beta in zip(config.mus, config.betas): 
+for mu, beta in zip(mus_seconds, betas_seconds): 
     sol = solve_ivp(
         fun=utils.reaction_diffusion_IS,
         t_span=t_span_rdIS,

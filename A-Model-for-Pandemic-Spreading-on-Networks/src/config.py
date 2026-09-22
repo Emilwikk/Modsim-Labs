@@ -2,10 +2,10 @@
 seconds_per_day = 24*60*60
 SHOW_PLOTS = 0
 
-# Simulation parameters
+# Simulation parameters (SI-model)
 
-mus = [1e-6, 2e-6, 4e-6]    # Recovery rate [s^-1]
-betas = [4e-6, 1e-6, 6e-6]  # Infection rate [s^-1]
+mus =   [4   , 4, 4]    # Recovery rate [per day]
+betas = [8/32, 10/32, 6/32]      # Infection rate [per day]
 
 initial_infected = 2
 initial_susceptible = 30
