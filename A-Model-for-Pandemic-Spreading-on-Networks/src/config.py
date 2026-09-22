@@ -11,3 +11,15 @@ initial_infected = 2
 initial_susceptible = 30
 
 days_simulated = 5
+
+
+
+
+## Scale Free Networks ##
+
+# Number of nodes
+V = 100
+
+# Power law parameter
+gamma = 0.75
+

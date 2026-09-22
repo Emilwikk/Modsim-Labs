@@ -17,8 +17,6 @@ y0_rdIS = [config.initial_infected,config.initial_susceptible]
 mus_seconds = np.array(config.mus)/config.seconds_per_day
 betas_seconds = np.array(config.betas)/config.seconds_per_day
 
-print(zip(mus_seconds, betas_seconds))
-
 # Creates pairs of mus and betas, not all possible combos
 for mu, beta in zip(mus_seconds, betas_seconds): 
     sol = solve_ivp(
