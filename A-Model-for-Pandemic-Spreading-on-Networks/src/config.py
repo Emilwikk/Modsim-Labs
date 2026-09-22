@@ -11,3 +11,6 @@ initial_infected = 2
 initial_susceptible = 30
 
 days_simulated = 5
+
+## Stochastic Simulation ##
+
