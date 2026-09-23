@@ -63,15 +63,27 @@ def fit_gamma(degrees):
     fitted_gamma = slope
     return fitted_gamma
 
+class Node:
+    def __init__(self,population):
+        self.population = population
+
+def random_node_populating(S,I,V):
+    pass
 
 class SFN:
-    def __init__(self, V, gamma):
+    def __init__(self, V, gamma, S, I):
         self.V = V
         self.gamma = gamma
+        self.S = S
+        self.I = I
         A, degrees = powerlaw_adjacency_matrix(self.V,self.gamma)
         self.A = A
         self.degrees = degrees
         self.fitted_gamma = fit_gamma(self.degrees)
+
+        self.population = S+I
+        self.nodes = []
+        [self.nodes.append(Node(self.population/self.V)) for i in range(len(V))]
 
 
 def plot_SFNs_degrees(SFNs,fig_dir):
