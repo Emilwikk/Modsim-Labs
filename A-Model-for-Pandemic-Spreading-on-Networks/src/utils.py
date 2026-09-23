@@ -56,6 +56,14 @@ def powerlaw_adjacency_matrix(V, gamma):
 
     return A, degrees
 
+def fit_gamma(degrees):
+
+    degree, count = np.unique(degrees,return_counts=True)
+    slope,inter = np.polyfit(np.log(degree),np.log(count),deg=1)
+    fitted_gamma = slope
+    return fitted_gamma
+
+
 class SFN:
     def __init__(self, V, gamma):
         self.V = V
@@ -63,6 +71,8 @@ class SFN:
         A, degrees = powerlaw_adjacency_matrix(self.V,self.gamma)
         self.A = A
         self.degrees = degrees
+        self.fitted_gamma = fit_gamma(self.degrees)
+
 
 def plot_SFNs_degrees(SFNs,fig_dir):
     """
