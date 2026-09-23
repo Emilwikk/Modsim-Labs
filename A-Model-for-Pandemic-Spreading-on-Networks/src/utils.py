@@ -38,16 +38,17 @@ def powerlaw_adjacency_matrix(V, gamma):
         ki = np.floor(((k_max**(gamma+1)-k_min**(gamma+1))*r+k_min**(gamma+1))**(1/(gamma+1)))
         degrees.append(int(ki))
 
-        weird_list = []
-        for i,deg in enumerate(degrees):
-            [weird_list.append(i) for j in range(deg)]
+    weird_list = []
+    for i,deg in enumerate(degrees):
+        [weird_list.append(i) for j in range(deg)]
 
-        while weird_list and np.unique(weird_list)>1:
-            i,j = random.sample(weird_list,2)
-            if i!=j:    
-                A[i,j] = 1
-                A[j,i] = 1
-
+    while weird_list and len(set(weird_list))>1:
+        i,j = random.sample(weird_list,2)
+        if i!=j and A[i,j]==0: # A[i,j]==0 because if not, i and j will be removed from weird_list even though a new connection has not been made    
+            A[i,j] = 1
+            A[j,i] = 1
+            weird_list.remove(i)
+            weird_list.remove(j)
 
     return A
 
