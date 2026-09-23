@@ -1,3 +1,6 @@
+from pathlib import Path
+
+from collections import Counter
 from matplotlib import pyplot as plt
 import numpy as np
 import random
@@ -20,11 +23,12 @@ def plot_sim1(t, y, mu, beta,  spd, fig_dir, show_plots):
     plt.ylabel("Relative Population")
     plt.savefig(fig_dir / f"sim1_mu{mu:.1e}_beta{beta:.1e}.png")
     if show_plots == 1:
-        plt.show()    
+        plt.show()
 
 def powerlaw_adjacency_matrix(V, gamma):
     """
-    Create an adjacency matrix A for V number of nodes using power law: P(k_i)=k^gamma.    
+    Create an adjacency matrix A for V number of nodes using power law: P(k_i)=k^gamma.
+    Returns adjacency matrix 'A' and degrees of each node in vector 'degrees'    
     """
 
     A = np.zeros((V,V),dtype=int)
@@ -50,5 +54,32 @@ def powerlaw_adjacency_matrix(V, gamma):
             weird_list.remove(i)
             weird_list.remove(j)
 
-    return A
+    return A, degrees
+
+class SFN:
+    def __init__(self, V, gamma):
+        self.V = V
+        self.gamma = gamma
+        A, degrees = powerlaw_adjacency_matrix(self.V,self.gamma)
+        self.A = A
+        self.degrees = degrees
+
+def plot_SFNs_degrees(SFNs,fig_dir):
+    """
+    Make a plot of degree distributions for the nodes in a list of Scale-Free Networks (SFNs)
+    Figures are saved to fig_dir
+    """
+    
+    plt.figure()
+    for sfn in SFNs:
+        degrees = sfn.degrees
+        values, counts = np.unique(degrees,return_counts=True)
+        plt.plot(values,counts, label=f"gamma={sfn.gamma}")
+    plt.title(f"Degree Distributions for SFNs with \nVarying Power Law Gammas")
+    plt.xlabel("Degree")
+    plt.ylabel("# Occurrances")
+    plt.grid()
+    plt.legend()
+
+    plt.savefig(fig_dir)
 
