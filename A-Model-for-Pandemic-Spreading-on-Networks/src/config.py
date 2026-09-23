@@ -21,5 +21,5 @@ days_simulated = 5
 V = 100
 
 # Power law parameter
-gamma = 0.75
+pl_gamma = 0.75
 
