@@ -8,7 +8,7 @@ from scipy.integrate import solve_ivp
 import utils
 
 mainPy_dir = Path(__file__).resolve().parent
-fig_dir = mainPy_dir / "../results/figures"
+fig_dir = mainPy_dir / "../results/reaction_diffusion_SIS"
 fig_dir.mkdir(parents=True, exist_ok=True)
 
 t_span_rdIS = [0,config.days_simulated*config.seconds_per_day] # seconds
