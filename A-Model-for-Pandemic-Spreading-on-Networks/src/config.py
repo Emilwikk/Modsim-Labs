@@ -13,8 +13,6 @@ initial_susceptible = 30
 days_simulated = 5
 
 
-
-
 ## Scale Free Networks ##
 
 # Number of nodes
@@ -23,3 +21,9 @@ V = 100
 # Power law parameter
 pl_gammas = [-1.5,-2.5,-3.5]
 
+## Diffusion Along Networks
+
+V_dan = 200
+gamma_dan = -2.5
+S_dan = 1000
+I_dan = 100
