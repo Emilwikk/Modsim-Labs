@@ -68,6 +68,9 @@ class Node:
         self.S = S
         self.I = I
 
+        self.S_history = [S]
+        self.I_history = [I]
+
 class SFN:
     def __init__(self, V, gamma):
         self.V = V
@@ -80,6 +83,8 @@ class SFN:
     def populate(self, S, I):
         self.nodes = []
         probabilities = np.ones(self.V)/self.V
+        probabilities = np.zeros(self.V)
+        probabilities[0] = 1
 
         S_nodes = np.random.multinomial(S,probabilities)
         I_nodes = np.random.multinomial(I,probabilities)
@@ -101,6 +106,10 @@ class SFN:
         for n, node in enumerate(self.nodes):
             node.S = S_move[n]
             node.I = I_move[n]
+
+            # Save to history
+            node.S_history.append(node.S)
+            node.I_history.append(node.I)
 
         
 
