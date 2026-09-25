@@ -67,9 +67,13 @@ class Node:
     def __init__(self,S,I):
         self.S = S
         self.I = I
+        self.Pop = S+I
 
         self.S_history = [S]
         self.I_history = [I]
+        self.Pop_history = [S+I]
+
+        self.steady_state_reched = False
 
 class SFN:
     def __init__(self, V, gamma):
@@ -106,15 +110,66 @@ class SFN:
         for n, node in enumerate(self.nodes):
             node.S = S_move[n]
             node.I = I_move[n]
+            node.Pop = node.S+node.I
 
             # Save to history
             node.S_history.append(node.S)
             node.I_history.append(node.I)
+            node.Pop_history.append(node.Pop)
+
+    def plot_populations(self, out_dir:Path):
+        if len(self.nodes[0].S_history)>1:
+            plt.figure()
+            plt.title("Number of Susceptible Individuals Per Node Over Time")
+            for n, node in enumerate(self.nodes):
+                plt.plot(range(len(node.S_history)), node.S_history, label=f"Node {n}")
+            plt.legend()
+            #plt.axis([0,config.steps+1,0,400])
+            plt.xlabel("Time []")
+            plt.ylabel("Quantity")
+            plt.grid()
+            plt.savefig(out_dir/"susceptible_over_time.pdf")
+
+            plt.figure()
+            plt.title("Number of Infected Individuals Per Node Over Time")
+            for n, node in enumerate(self.nodes):
+                plt.plot(range(len(node.I_history)), node.I_history, label=f"Node {n}")
+            plt.legend()
+            #plt.axis([0,config.steps+1,0,400])
+            plt.xlabel("Time []")
+            plt.ylabel("Quantity")
+            plt.grid()
+            plt.savefig(out_dir/"infected_over_time.pdf")
+
+            plt.figure()
+            plt.title("Total Population Per Node Over Time")
+            for n, node in enumerate(self.nodes):
+                plt.plot(range(len(node.Pop_history)), node.Pop_history, label=f"Node {n}")
+            plt.legend()
+            #plt.axis([0,config.steps+1,0,400])
+            plt.xlabel("Time []")
+            plt.ylabel("Quantity")
+            plt.grid()
+            plt.savefig(out_dir/"population_over_time.pdf")
+        else:
+            print("No movement of individuals were recorded")
+
+    def steady_state_reached(self, wdw_size=10, tol=0.01):
+        for n, node in enumerate(self.nodes):
+            if len(node.Pop_history) < 2*wdw_size:
+                return False
+                
+            old_mean = np.mean(node.Pop_history[-2*wdw_size:-wdw_size])
+            new_mean = np.mean(node.Pop_history[-wdw_size:])
+            if np.abs(old_mean-new_mean)>tol*max(old_mean,1):
+                return False
+
+        return True
+
+
+
 
         
-
-                
-
 
 
 def plot_SFNs_degrees(SFNs,fig_dir):
