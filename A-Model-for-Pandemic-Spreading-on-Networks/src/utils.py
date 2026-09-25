@@ -21,7 +21,7 @@ def plot_sim1(t, y, mu, beta,  spd, fig_dir, show_plots):
     plt.grid()
     plt.xlabel("Time [Days]")
     plt.ylabel("Relative Population")
-    plt.savefig(fig_dir / f"sim1_mu{mu:.1e}_beta{beta:.1e}.png")
+    plt.savefig(fig_dir / f"sim1_mu{mu:.1e}_beta{beta:.1e}.pdf")
     if show_plots == 1:
         plt.show()
 
@@ -86,6 +86,26 @@ class SFN:
 
         for i in range(self.V):
             self.nodes.append(Node(S_nodes[i],I_nodes[i]))
+
+    def move_individuals(self):
+        S_move = np.zeros(self.V, dtype=int)
+        I_move = np.zeros(self.V, dtype=int)
+        for n, node in enumerate(self.nodes):
+            move_prob = self.A[n,:]/sum(self.A[n,:])
+
+            # Move susceptible individuals to new node
+            S_move = S_move + np.random.multinomial(node.S, move_prob)
+            I_move = I_move + np.random.multinomial(node.I, move_prob)
+
+        # Add changes to actual nodes
+        for n, node in enumerate(self.nodes):
+            node.S = S_move[n]
+            node.I = I_move[n]
+
+        
+
+                
+
 
 
 def plot_SFNs_degrees(SFNs,fig_dir):

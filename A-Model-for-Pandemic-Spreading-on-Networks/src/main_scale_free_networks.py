@@ -17,7 +17,7 @@ for pl_gamma in config.pl_gammas:
     SFNs.append(utils.SFN(config.V, pl_gamma))
 
 # Plot degree distributions
-utils.plot_SFNs_degrees(SFNs, fig_dir=fig_dir/"degree_distributions.png")
+utils.plot_SFNs_degrees(SFNs, fig_dir=fig_dir/"degree_distributions.pdf")
 
 # Print the fitted gammas
 for sfn in SFNs:
