@@ -68,6 +68,7 @@ class Node:
         self.S = S
         self.I = I
         self.Pop = S+I
+        self.degree = None
 
         self.S_history = [S]
         self.I_history = [I]
@@ -87,14 +88,15 @@ class SFN:
     def populate(self, S, I):
         self.nodes = []
         probabilities = np.ones(self.V)/self.V
-        probabilities = np.zeros(self.V)
-        probabilities[0] = 1
+        #probabilities = np.zeros(self.V)
+        #probabilities[0] = 1
 
         S_nodes = np.random.multinomial(S,probabilities)
         I_nodes = np.random.multinomial(I,probabilities)
 
         for i in range(self.V):
             self.nodes.append(Node(S_nodes[i],I_nodes[i]))
+            self.nodes[i].degree = self.degrees[i]
 
     def move_individuals(self):
         S_move = np.zeros(self.V, dtype=int)
@@ -155,16 +157,19 @@ class SFN:
             print("No movement of individuals were recorded")
 
     def steady_state_reached(self, wdw_size=10, tol=0.01):
+        means = []
         for n, node in enumerate(self.nodes):
             if len(node.Pop_history) < 2*wdw_size:
-                return False
+                return False, None
                 
             old_mean = np.mean(node.Pop_history[-2*wdw_size:-wdw_size])
             new_mean = np.mean(node.Pop_history[-wdw_size:])
             if np.abs(old_mean-new_mean)>tol*max(old_mean,1):
-                return False
+                return False, new_mean
 
-        return True
+            means.append(new_mean)
+
+        return True, means
 
 
 
