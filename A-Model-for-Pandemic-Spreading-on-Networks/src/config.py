@@ -23,7 +23,7 @@ pl_gammas = [-1.5,-2.5,-3.5]
 
 ## Diffusion Along Networks
 
-V_dan = 100
+V_dan = 25
 gamma_dan = -2.5
 gammas_dan = [-1.5, -2.5, -3.5]
 S_dan = 1000
