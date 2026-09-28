@@ -192,26 +192,6 @@ class SFN:
             if np.abs(old_mean-new_mean)>(tol*node.degree*N)/noodes:
                 return False, new_mean
 
-            means.append(new_mean)
-
-            relative_change = (
-                np.abs(old_mean - new_mean) / max(old_mean, 1)
-            )
-
-            if relative_change <= tol:
-                node.steady_counter += 1
-            else:
-                node.steady_counter = 0
-                node.steady_state_reached = False
-
-            if node.steady_counter >= stable_steps_for_stability:
-                node.steady_state_reached = True
-
-        all_steady = all(
-            node.steady_state_reached
-            for node in self.nodes
-        )
-
         return all_steady, means
 
 
