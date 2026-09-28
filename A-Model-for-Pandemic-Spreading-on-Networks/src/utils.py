@@ -32,7 +32,7 @@ def powerlaw_adjacency_matrix(V, gamma):
     """
 
     A = np.zeros((V,V),dtype=int)
-    degrees = []
+    target_degrees = []
     k_min = 2
     k_max = np.sqrt(V)
 
@@ -40,10 +40,10 @@ def powerlaw_adjacency_matrix(V, gamma):
         # Random float between 0 and 1
         r = np.random.rand()
         ki = np.floor(((k_max**(gamma+1)-k_min**(gamma+1))*r+k_min**(gamma+1))**(1/(gamma+1)))
-        degrees.append(int(ki))
+        target_degrees.append(int(ki))
 
     weird_list = []
-    for i,deg in enumerate(degrees):
+    for i,deg in enumerate(target_degrees):
         [weird_list.append(i) for j in range(deg)]
 
     while weird_list and len(set(weird_list))>1:
@@ -65,7 +65,7 @@ def powerlaw_adjacency_matrix(V, gamma):
         weird_list.remove(i)
         weird_list.remove(j)
 
-    return A, degrees
+    return A, target_degrees
 
 def fit_gamma(degrees):
 
@@ -94,6 +94,8 @@ class SFN:
         A, target_degrees = powerlaw_adjacency_matrix(self.V,self.gamma)
         self.A = A
         self.target_degrees = target_degrees
+        self.actual_degrees = np.sum(self.A, axis=0)
+        self.avg_network_degree = np.mean(self.actual_degrees)
         self.fitted_gamma = fit_gamma(self.target_degrees)
 
     def populate(self, S, I):
@@ -109,13 +111,17 @@ class SFN:
             self.nodes.append(Node(S_nodes[i],I_nodes[i]))
             self.nodes[i].degree = np.sum(self.A[i,:])
 
+        self.avg_node_population = (S+I)/self.V
+
+        
+
     def move_individuals(self):
         S_move = np.zeros(self.V, dtype=int)
         I_move = np.zeros(self.V, dtype=int)
         for n, node in enumerate(self.nodes):
             if node.degree==0:
-                S_move += node.S
-                I_move += node.I 
+                S_move[n] += node.S
+                I_move[n] += node.I 
                 continue 
 
             move_prob = self.A[n,:]/node.degree
@@ -189,10 +195,6 @@ class SFN:
 
 
 
-
-        
-
-
 def plot_SFNs_degrees(SFNs,fig_dir):
     """
     Make a plot of degree distributions for the nodes in a list of Scale-Free Networks (SFNs)
@@ -211,4 +213,17 @@ def plot_SFNs_degrees(SFNs,fig_dir):
     plt.legend()
 
     plt.savefig(fig_dir)
+
+def plot_rho_vs_k(sfn):
+    rho_k = []
+    k = []
+
+    for i, node in enumerate(sfn.nodes):
+        rho_k.append(node.degree/sfn.avg_network_degree*sfn.steady_state[i])
+        k.append(node.degree)
+
+    plt.figure()
+    plt.scatter(k,rho_k)
+    plt.show()
+
 

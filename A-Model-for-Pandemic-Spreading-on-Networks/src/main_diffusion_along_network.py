@@ -21,7 +21,8 @@ while steady_state_reached==False:
     steady_state_reached, steady_state = sfn.steady_state_reached(wdw_size=10, tol=0.03)
 
 sfn.plot_populations(out_dir=fig_dir)
+sfn.steady_state = steady_state
 
-print(steady_state)
+utils.plot_rho_vs_k(sfn)
 
 
