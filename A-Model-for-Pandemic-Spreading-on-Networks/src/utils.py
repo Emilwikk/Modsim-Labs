@@ -47,12 +47,23 @@ def powerlaw_adjacency_matrix(V, gamma):
         [weird_list.append(i) for j in range(deg)]
 
     while weird_list and len(set(weird_list))>1:
-        i,j = random.sample(weird_list,2)
-        if i!=j and A[i,j]==0: # A[i,j]==0 because if not, i and j will be removed from weird_list even though a new connection has not been made    
-            A[i,j] = 1
-            A[j,i] = 1
-            weird_list.remove(i)
-            weird_list.remove(j)
+        unique_nodes = set(weird_list)
+
+        valid_pairs = [(i,j)
+         for i in unique_nodes
+         for j in unique_nodes
+         if i<j and A[i,j]==0]
+
+        if not valid_pairs:
+            break
+
+        i, j = random.choice(valid_pairs)
+
+        A[i,j] = 1
+        A[j,i] = 1
+
+        weird_list.remove(i)
+        weird_list.remove(j)
 
     return A, degrees
 
