@@ -179,7 +179,7 @@ class SFN:
         else:
             print("No movement of individuals were recorded")
 
-    def steady_state_reached(self, wdw_size=10, tol=0.01):
+    def steady_state_reached(self, wdw_size=10, tol=0.01, stable_steps_for_stability=5):
         means = []
 
         for node in self.nodes:
@@ -206,7 +206,7 @@ class SFN:
                 node.steady_counter = 0
                 node.steady_state_reached = False
 
-            if node.steady_counter >= 5:
+            if node.steady_counter >= stable_steps_for_stability:
                 node.steady_state_reached = True
 
         all_steady = all(
