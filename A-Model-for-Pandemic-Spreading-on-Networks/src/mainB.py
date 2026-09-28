@@ -22,6 +22,7 @@ class State:
     INFECTED = 1
     SUSCEPTIBLE = 0
 
+
 #Constants
 tend = 5
 time_step = 0.1

@@ -113,7 +113,6 @@ class SFN:
             self.nodes[i].degree = np.sum(self.A[i,:])
 
         self.avg_node_population = (S+I)/self.V
-
         
 
     def move_individuals(self):
@@ -148,7 +147,7 @@ class SFN:
             plt.title("Number of Susceptible Individuals Per Node Over Time")
             for n, node in enumerate(self.nodes):
                 plt.plot(range(len(node.S_history)), node.S_history, label=f"Node {n}")
-            plt.legend()
+            #plt.legend()
             #plt.axis([0,config.steps+1,0,400])
             plt.xlabel("Time []")
             plt.ylabel("Quantity")
@@ -159,7 +158,7 @@ class SFN:
             plt.title("Number of Infected Individuals Per Node Over Time")
             for n, node in enumerate(self.nodes):
                 plt.plot(range(len(node.I_history)), node.I_history, label=f"Node {n}")
-            plt.legend()
+            #plt.legend()
             #plt.axis([0,config.steps+1,0,400])
             plt.xlabel("Time []")
             plt.ylabel("Quantity")
@@ -170,7 +169,7 @@ class SFN:
             plt.title("Total Population Per Node Over Time")
             for n, node in enumerate(self.nodes):
                 plt.plot(range(len(node.Pop_history)), node.Pop_history, label=f"Node {n}")
-            plt.legend()
+            #plt.legend()
             #plt.axis([0,config.steps+1,0,400])
             plt.xlabel("Time []")
             plt.ylabel("Quantity")
@@ -230,3 +229,50 @@ def plot_rho_vs_k(sfn):
     plt.show()
 
 
+
+class State:
+    INFECTED = 1
+    SUSCEPTIBLE = 0
+
+
+def susceptible_to_infected(mask_susceptible, N,beta, dt, rng):
+
+    infected = N - np.sum(mask_susceptible)
+    prob = 1 - (1 - beta*dt)**infected
+    new_infections = mask_susceptible * prob > rng.random(N)
+
+    return new_infections
+
+def infected_to_susceptible(mask_infected,  N, mu, dt, rng):
+
+    prob = mu*dt
+    new_susceptible = mask_infected * prob > rng.random(N)
+
+    return new_susceptible
+
+
+#Stochastic infection
+def stochastic_state(SFN: SFN = None , beta = 0, mu = 0, timestep = 0):
+    #STATE CHANGER
+    rng = np.random.default_rng()
+    for node in SFN.nodes:
+        N = node.I + node.S
+        individuals = np.full(N, State.SUSCEPTIBLE)
+        infected_idx = rng.choice(N, node.I, replace = False)
+        individuals[infected_idx] = State.INFECTED
+
+        mask_susceptible = individuals == State.SUSCEPTIBLE
+        mask_infected = individuals == State.INFECTED
+
+        new_susceptible = infected_to_susceptible(mask_infected, N, mu, timestep, rng)
+        new_infected = susceptible_to_infected(mask_susceptible, N, beta, timestep, rng)
+
+        individuals[new_infected] = State.INFECTED
+        individuals[new_susceptible] = State.SUSCEPTIBLE
+
+        nmb_susceptible = np.sum(individuals == State.SUSCEPTIBLE)
+        nmb_infected = np.sum(individuals == State.INFECTED)
+
+        node.S = nmb_susceptible
+        node.I = nmb_infected
+    return 
