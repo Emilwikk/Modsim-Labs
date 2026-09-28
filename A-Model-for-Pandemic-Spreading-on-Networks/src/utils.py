@@ -91,10 +91,10 @@ class SFN:
     def __init__(self, V, gamma):
         self.V = V
         self.gamma = gamma
-        A, degrees = powerlaw_adjacency_matrix(self.V,self.gamma)
+        A, target_degrees = powerlaw_adjacency_matrix(self.V,self.gamma)
         self.A = A
-        self.degrees = degrees
-        self.fitted_gamma = fit_gamma(self.degrees)
+        self.target_degrees = target_degrees
+        self.fitted_gamma = fit_gamma(self.target_degrees)
 
     def populate(self, S, I):
         self.nodes = []
@@ -107,13 +107,18 @@ class SFN:
 
         for i in range(self.V):
             self.nodes.append(Node(S_nodes[i],I_nodes[i]))
-            self.nodes[i].degree = self.degrees[i]
+            self.nodes[i].degree = np.sum(self.A[i,:])
 
     def move_individuals(self):
         S_move = np.zeros(self.V, dtype=int)
         I_move = np.zeros(self.V, dtype=int)
         for n, node in enumerate(self.nodes):
-            move_prob = self.A[n,:]/sum(self.A[n,:])
+            if node.degree==0:
+                S_move += node.S
+                I_move += node.I 
+                continue 
+
+            move_prob = self.A[n,:]/node.degree
 
             # Move susceptible individuals to new node
             S_move = S_move + np.random.multinomial(node.S, move_prob)
