@@ -85,7 +85,8 @@ class Node:
         self.I_history = [I]
         self.Pop_history = [S+I]
 
-        self.steady_state_reched = False
+        self.steady_counter = 0
+        self.steady_state_reached = False
 
 class SFN:
     def __init__(self, V, gamma):
@@ -180,8 +181,10 @@ class SFN:
 
     def steady_state_reached(self, wdw_size=10, tol=0.01, N = 0, noodes = 0):
         means = []
-        for n, node in enumerate(self.nodes):
-            if len(node.Pop_history) < 2*wdw_size:
+
+        for node in self.nodes:
+
+            if len(node.Pop_history) < 2 * wdw_size:
                 return False, None
                 
             old_mean = np.mean(node.Pop_history[-2*wdw_size:-wdw_size])
@@ -191,7 +194,25 @@ class SFN:
 
             means.append(new_mean)
 
-        return True, means
+            relative_change = (
+                np.abs(old_mean - new_mean) / max(old_mean, 1)
+            )
+
+            if relative_change <= tol:
+                node.steady_counter += 1
+            else:
+                node.steady_counter = 0
+                node.steady_state_reached = False
+
+            if node.steady_counter >= stable_steps_for_stability:
+                node.steady_state_reached = True
+
+        all_steady = all(
+            node.steady_state_reached
+            for node in self.nodes
+        )
+
+        return all_steady, means
 
 
 
