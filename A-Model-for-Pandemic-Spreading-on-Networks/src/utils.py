@@ -179,7 +179,7 @@ class SFN:
         else:
             print("No movement of individuals were recorded")
 
-    def steady_state_reached(self, wdw_size=10, tol=0.01, N = 0, noodes = 0):
+    def steady_state_reached(self, wdw_size=10, tol=0.01, N = 0, V = 0):
         means = []
 
         for node in self.nodes:
@@ -189,10 +189,12 @@ class SFN:
                 
             old_mean = np.mean(node.Pop_history[-2*wdw_size:-wdw_size])
             new_mean = np.mean(node.Pop_history[-wdw_size:])
-            if np.abs(old_mean-new_mean)>(tol*node.degree*N)/noodes:
+            if np.abs(old_mean-new_mean)>(tol*node.degree*N)/V:
                 return False, new_mean
+            
+            means.append(new_mean)
 
-        return all_steady, means
+        return True, means
 
 
 

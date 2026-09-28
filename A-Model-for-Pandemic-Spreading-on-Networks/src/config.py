@@ -26,7 +26,5 @@ pl_gammas = [-1.5,-2.5,-3.5]
 V_dan = 1000
 gamma_dan = -2.5
 gammas_dan = [-1.5, -2.5, -3.5]
-S_dan = 1000000
-I_dan = 50
-
-stable_steps_for_stability = 3
+S_dan = 100000000
+I_dan = 1000
