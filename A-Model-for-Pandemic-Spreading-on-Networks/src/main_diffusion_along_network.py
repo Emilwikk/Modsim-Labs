@@ -16,10 +16,14 @@ sfn.populate(S=config.S_dan, I=config.I_dan)
 #    sfn.move_individuals()
 
 steady_state_reached = False
+j = 0
 while steady_state_reached==False:
+
     sfn.move_individuals()
-    steady_state_reached, steady_state = sfn.steady_state_reached(wdw_size=100, tol=0.05, 
+    steady_state_reached, steady_state = sfn.steady_state_reached(wdw_size=10, tol=0.05, 
                                                                   stable_steps_for_stability=config.stable_steps_for_stability)
+    j+=1
+    print(f"This is time step {j}")
 
 sfn.plot_populations(out_dir=fig_dir)
 sfn.steady_state = steady_state
