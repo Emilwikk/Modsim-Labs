@@ -30,7 +30,7 @@ def powerlaw_adjacency_matrix(V, gamma):
     Create an adjacency matrix A for V number of nodes using power law: P(k_i)=k^gamma.
     Returns adjacency matrix 'A' and degrees of each node in vector 'degrees'    
     """
-
+    print(f"Building adjacency matrix...")
     A = np.zeros((V,V),dtype=int)
     target_degrees = []
     k_min = 2
@@ -65,6 +65,7 @@ def powerlaw_adjacency_matrix(V, gamma):
         weird_list.remove(i)
         weird_list.remove(j)
 
+    print(f"Adjacency matrix complete")
     return A, target_degrees
 
 def fit_gamma(degrees):
@@ -144,7 +145,7 @@ class SFN:
     def plot_populations(self, out_dir:Path):
         if len(self.nodes[0].S_history)>1:
             plt.figure()
-            plt.title("Number of Susceptible Individuals Per Node Over Time")
+            plt.title(f"Number of Susceptible Individuals Per Node Over Time\nGamma = {self.gamma}")
             for n, node in enumerate(self.nodes):
                 plt.plot(range(len(node.S_history)), node.S_history, label=f"Node {n}")
             #plt.legend()
@@ -152,10 +153,10 @@ class SFN:
             plt.xlabel("Time []")
             plt.ylabel("Quantity")
             plt.grid()
-            plt.savefig(out_dir/"susceptible_over_time.pdf")
+            plt.savefig(out_dir/f"susceptible_over_time_gamma_{self.gamma}.pdf")
 
             plt.figure()
-            plt.title("Number of Infected Individuals Per Node Over Time")
+            plt.title(f"Number of Infected Individuals Per Node Over Time\nGamma = {self.gamma}")
             for n, node in enumerate(self.nodes):
                 plt.plot(range(len(node.I_history)), node.I_history, label=f"Node {n}")
             #plt.legend()
@@ -163,10 +164,10 @@ class SFN:
             plt.xlabel("Time []")
             plt.ylabel("Quantity")
             plt.grid()
-            plt.savefig(out_dir/"infected_over_time.pdf")
+            plt.savefig(out_dir/Path(f"infected_over_time_gamma_{self.gamma}.pdf"))
 
             plt.figure()
-            plt.title("Total Population Per Node Over Time")
+            plt.title(f"Total Population Per Node Over Time\nGamma = {self.gamma}")
             for n, node in enumerate(self.nodes):
                 plt.plot(range(len(node.Pop_history)), node.Pop_history, label=f"Node {n}")
             #plt.legend()
@@ -174,7 +175,7 @@ class SFN:
             plt.xlabel("Time []")
             plt.ylabel("Quantity")
             plt.grid()
-            plt.savefig(out_dir/"population_over_time.pdf")
+            plt.savefig(out_dir/Path(f"population_over_time_gamma_{self.gamma}.pdf"))
         else:
             print("No movement of individuals were recorded")
 
@@ -216,17 +217,27 @@ def plot_SFNs_degrees(SFNs,fig_dir):
 
     plt.savefig(fig_dir)
 
-def plot_rho_vs_k(sfn):
-    rho_k = []
-    k = []
+def plot_rho_vs_k(sfn, out_dir):
+    unique_k = np.unique(sfn.actual_degrees)
 
-    for i, node in enumerate(sfn.nodes):
-        rho_k.append(node.degree/sfn.avg_network_degree*sfn.steady_state[i])
-        k.append(node.degree)
+    rho_measured = []
+    rho_theory = []
+
+    for k in unique_k:
+        populations = [sfn.steady_state[i] for i, node in enumerate(sfn.nodes) if node.degree==k]
+        rho_measured.append(np.mean(populations))
+
+        rho_theory.append(k/sfn.avg_network_degree*sfn.avg_node_population)
 
     plt.figure()
-    plt.scatter(k,rho_k)
-    plt.show()
+    plt.title("Average populations per node depending on degree")
+    plt.scatter(unique_k, rho_measured, label="Measured avg. populations")
+    plt.plot(unique_k, rho_theory, label="Theoretical avg. populations")
+    plt.xlabel("Degree k")
+    plt.ylabel("Population")
+    plt.legend()
+    plt.grid()
+    plt.savefig(out_dir/Path(f"pop_vs_degree_gamma_{sfn.gamma}.pdf"))
 
 
 
