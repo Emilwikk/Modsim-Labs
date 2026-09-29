@@ -16,7 +16,7 @@ days_simulated = 5
 ## Scale Free Networks ##
 
 # Number of nodes
-V = 5
+V = 100
 
 # Power law parameter
 pl_gammas = [-1.5,-2.5,-3.5]
