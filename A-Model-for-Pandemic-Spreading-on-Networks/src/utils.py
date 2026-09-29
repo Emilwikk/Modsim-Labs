@@ -206,7 +206,7 @@ def plot_SFNs_degrees(SFNs,fig_dir):
     
     plt.figure()
     for sfn in SFNs:
-        degrees = sfn.degrees
+        degrees = sfn.target_degrees
         values, counts = np.unique(degrees,return_counts=True)
         plt.plot(values,counts, label=f"gamma={sfn.gamma}")
     plt.title(f"Degree Distributions for SFNs with \nVarying Power Law Gammas")
