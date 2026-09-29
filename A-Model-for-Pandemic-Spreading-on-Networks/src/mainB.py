@@ -1,6 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
-
+from pathlib import Path
 
 def susceptible_to_infected(mask_susceptible, N,beta, dt, rng):
 
@@ -22,6 +22,9 @@ class State:
     INFECTED = 1
     SUSCEPTIBLE = 0
 
+mainPy_dir = Path(__file__).resolve().parent
+fig_dir = mainPy_dir / Path(f"../results/stochastic_simulation/")
+fig_dir.mkdir(parents=True, exist_ok=True)
 
 #Constants
 tend = 5
@@ -98,4 +101,4 @@ for mu, beta in list(zip(mu_list, beta_list)):
     plt.grid()
     plt.legend()
     #plt.show()
-    plt.savefig(f"sim2_mu{mu}_beta{beta}.pdf", dpi = 300)
+    plt.savefig(fig_dir / f"sim2_mu{mu}_beta{beta}.pdf", dpi = 300)
