@@ -208,8 +208,13 @@ class SFN:
                 
             old_mean = np.mean(node.Pop_history[-2*wdw_size:-wdw_size])
             new_mean = np.mean(node.Pop_history[-wdw_size:])
-            if np.abs(old_mean-new_mean)>(tol*node.degree*N)/V:
-                return False, new_mean
+            if (tol*node.degree*N)/V > 1:
+                if np.abs(old_mean-new_mean)>(tol*node.degree*N)/V:
+                    return False, new_mean
+            else:
+                if np.abs(old_mean-new_mean)>1:
+                    return False, new_mean
+
             
             means.append(new_mean)
 
@@ -306,3 +311,35 @@ def stochastic_state(SFN: SFN = None , beta = 0, mu = 0, timestep = 0):
         node.S = nmb_susceptible
         node.I = nmb_infected
     return 
+
+def plot_rel_infect_vs_init_rho(sfn_list, out_dir):
+    plt.figure()
+    V = []
+    rho = []
+    I_pop_rels = []
+    for sfn in sfn_list:
+        V.append(sfn.V)
+        rho.append(sfn.avg_node_population)
+        I_tot = 0
+
+        for node in sfn.nodes:
+            I_tot += node.I_history[-1] 
+
+        I_pop_rels.append((I_tot/sfn.V)/sfn.avg_node_population) 
+
+    # Group by V for plotting
+    for v in np.unique(V):
+        rho_group = [rho[i] for i in range(len(V)) if v==V[i]]
+        I_group = [I_pop_rels[i] for i in range(len(V)) if v==V[i]]
+
+        plt.plot(rho_group, I_group, label=f"V = {v}")
+    out_file = out_dir / Path("rel_infect_vs_init_rho.pdf")
+    plt.legend()
+    plt.grid()
+    plt.xlabel("Average Initial Population Per Node")
+    plt.ylabel("Porportion of Total Population Which is Infected")
+
+    plt.savefig(out_file)
+
+    
+        
