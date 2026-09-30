@@ -25,47 +25,66 @@ def plot_sim1(t, y, mu, beta,  spd, fig_dir, show_plots):
     if show_plots == 1:
         plt.show()
 
+
 def powerlaw_adjacency_matrix(V, gamma):
-    """
-    Create an adjacency matrix A for V number of nodes using power law: P(k_i)=k^gamma.
-    Returns adjacency matrix 'A' and degrees of each node in vector 'degrees'    
-    """
-    print(f"Building adjacency matrix...")
-    A = np.zeros((V,V),dtype=int)
-    target_degrees = []
+
+    print("Building adjacency matrix...")
+
+    A = np.zeros((V, V), dtype=int)
+
     k_min = 2
     k_max = np.sqrt(V)
 
-    for i in range(V):
-        # Random float between 0 and 1
+    target_degrees = []
+
+    for _ in range(V):
         r = np.random.rand()
-        ki = np.floor(((k_max**(gamma+1)-k_min**(gamma+1))*r+k_min**(gamma+1))**(1/(gamma+1)))
+
+        ki = np.floor(
+            (
+                (k_max**(gamma + 1) - k_min**(gamma + 1)) * r
+                + k_min**(gamma + 1)
+            ) ** (1 / (gamma + 1))
+        )
+
         target_degrees.append(int(ki))
 
     weird_list = []
-    for i,deg in enumerate(target_degrees):
-        [weird_list.append(i) for j in range(deg)]
 
-    while weird_list and len(set(weird_list))>1:
-        unique_nodes = set(weird_list)
+    for i, deg in enumerate(target_degrees):
+        weird_list.extend([i] * deg)
 
-        valid_pairs = [(i,j)
-         for i in unique_nodes
-         for j in unique_nodes
-         if i<j and A[i,j]==0]
+    failed_attempts = 0
+    max_failed_attempts = 1000
 
-        if not valid_pairs:
+    while len(weird_list) > 1:
+
+        idx1, idx2 = random.sample(range(len(weird_list)), 2)
+
+        i = weird_list[idx1]
+        j = weird_list[idx2]
+
+        if i != j and A[i, j] == 0:
+            A[i, j] = 1
+            A[j, i] = 1
+
+            # Remove by index so we don't search through the list
+            for idx in sorted((idx1, idx2), reverse=True):
+                weird_list.pop(idx)
+
+            failed_attempts = 0
+
+        else:
+            failed_attempts += 1
+            print(f"failed attempt: {failed_attempts}", end="\r", flush=True) 
+
+        if failed_attempts >= max_failed_attempts:
+            print("Broke")
             break
+            
 
-        i, j = random.choice(valid_pairs)
+    print("Adjacency matrix complete")
 
-        A[i,j] = 1
-        A[j,i] = 1
-
-        weird_list.remove(i)
-        weird_list.remove(j)
-
-    print(f"Adjacency matrix complete")
     return A, target_degrees
 
 def fit_gamma(degrees):
