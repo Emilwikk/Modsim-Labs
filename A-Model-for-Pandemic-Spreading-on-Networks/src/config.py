@@ -28,3 +28,15 @@ gamma_dan = -2.5
 gammas_dan = [-1.5, -2.5, -3.5]
 S_dan = 100000000
 I_dan = 30000
+
+## Combining it all ##
+
+mu5 = 2
+beta5 = 1
+gamma5 = -1.5
+
+V_list = [5, 20, 500]
+rho_min = 0.1
+rho_max = 2
+
+init_proportion_infected = 0.1
