@@ -35,7 +35,7 @@ mu5 = 2
 beta5 = 1
 gamma5 = -1.5
 
-V_list = [100, 500, 1000]
+V_list = [1000, 5000, 10000]
 rho_min = 0.1
 rho_max = 2
 n_rhos = 8

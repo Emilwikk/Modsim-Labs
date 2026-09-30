@@ -122,8 +122,8 @@ class SFN:
     def populate(self, S, I):
         self.nodes = []
         probabilities = np.ones(self.V)/self.V
-        probabilities = np.zeros(self.V)
-        probabilities[0] = 1
+        #probabilities = np.zeros(self.V)
+        #probabilities[0] = 1
 
         S_nodes = np.random.multinomial(S,probabilities)
         I_nodes = np.random.multinomial(I,probabilities)
@@ -236,6 +236,61 @@ class SFN:
             if abs(new_mean - old_mean) > threshold:
                 return False, None
             
+
+        return True, node_means
+
+    def infected_steady_state_reached(
+    self,
+    window=50,
+    rel_tol=0.05,
+    abs_tol=0.5,
+    I_rel_tol=0.02,
+    I_abs_tol=1.0):
+        if len(self.nodes[0].Pop_history) < 2 * window:
+            return False, None
+
+        # Individual node steady-state estimates
+        node_means = np.array([
+            np.mean(node.Pop_history[-window:])
+            for node in self.nodes
+        ])
+
+        # Check population diffusion by degree group
+        for k in np.unique(self.actual_degrees):
+
+            nodes_k = [
+                node for node in self.nodes
+                if node.degree == k
+            ]
+
+            old_mean = np.mean([
+                np.mean(node.Pop_history[-2*window:-window])
+                for node in nodes_k
+            ])
+
+            new_mean = np.mean([
+                np.mean(node.Pop_history[-window:])
+                for node in nodes_k
+            ])
+
+            threshold = abs_tol + rel_tol * new_mean
+
+            if abs(new_mean - old_mean) > threshold:
+                return False, None
+
+        # Check total infected population
+        old_I = np.mean(
+            self.I_total_history[-2*window:-window]
+        )
+
+        new_I = np.mean(
+            self.I_total_history[-window:]
+        )
+
+        I_threshold = I_abs_tol + I_rel_tol * new_I
+
+        if abs(new_I - old_I) > I_threshold:
+            return False, None
 
         return True, node_means
 
