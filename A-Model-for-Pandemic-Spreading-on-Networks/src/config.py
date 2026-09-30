@@ -35,8 +35,9 @@ mu5 = 2
 beta5 = 1
 gamma5 = -1.5
 
-V_list = [5, 20, 500]
-rho_min = 0.1
-rho_max = 2
+V_list = [1000, 5000, 10000]
+rho_min = 100
+rho_max = 120
+n_rhos = 8
 
 init_proportion_infected = 0.1
