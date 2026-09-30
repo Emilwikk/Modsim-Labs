@@ -40,7 +40,7 @@ for V in config.V_list:
 
             utils.stochastic_state(sfn, beta=config.beta5, mu=config.mu5, timestep = 0.25)
             sfn.move_individuals()
-            steady_state_reached, steady_state = sfn.steady_state_reached(wdw_size=1000, tol=0.05, N = init_cond[0]+init_cond[1], V=V)
+            steady_state_reached, steady_state = sfn.steady_state_reached(window=10, rel_tol=0.05, abs_tol=0.5)
             step = step+1
         print(f"Steady State Reached After {step} Steps")
 
