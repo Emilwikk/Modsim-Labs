@@ -122,8 +122,8 @@ class SFN:
     def populate(self, S, I):
         self.nodes = []
         probabilities = np.ones(self.V)/self.V
-        #probabilities = np.zeros(self.V)
-        #probabilities[0] = 1
+        probabilities = np.zeros(self.V)
+        probabilities[0] = 1
 
         S_nodes = np.random.multinomial(S,probabilities)
         I_nodes = np.random.multinomial(I,probabilities)
@@ -198,27 +198,46 @@ class SFN:
         else:
             print("No movement of individuals were recorded")
 
-    def steady_state_reached(self, wdw_size=10, tol=0.01, N = 0, V = 0):
-        means = []
+    def steady_state_reached(
+        self,
+        window=50,
+        rel_tol=0.05,
+        abs_tol=0.5
+    ):
+        if len(self.nodes[0].Pop_history) < 2 * window:
+            return False, None
 
-        for node in self.nodes:
+        # Steady-state estimate for each individual node
+        node_means = np.array([
+            np.mean(node.Pop_history[-window:])
+            for node in self.nodes
+        ])
 
-            if len(node.Pop_history) < 2 * wdw_size:
+        # Check convergence using degree groups
+        for k in np.unique(self.actual_degrees):
+
+            nodes_k = [
+                node for node in self.nodes
+                if node.degree == k
+            ]
+
+            old_mean = np.mean([
+                np.mean(node.Pop_history[-2*window:-window])
+                for node in nodes_k
+            ])
+
+            new_mean = np.mean([
+                np.mean(node.Pop_history[-window:])
+                for node in nodes_k
+            ])
+
+            threshold = abs_tol + rel_tol * new_mean
+
+            if abs(new_mean - old_mean) > threshold:
                 return False, None
-                
-            old_mean = np.mean(node.Pop_history[-2*wdw_size:-wdw_size])
-            new_mean = np.mean(node.Pop_history[-wdw_size:])
-            if (tol*node.degree*N)/V > 1:
-                if np.abs(old_mean-new_mean)>(tol*node.degree*N)/V:
-                    return False, new_mean
-            else:
-                if np.abs(old_mean-new_mean)>1:
-                    return False, new_mean
-
             
-            means.append(new_mean)
 
-        return True, means
+        return True, node_means
 
 
 
