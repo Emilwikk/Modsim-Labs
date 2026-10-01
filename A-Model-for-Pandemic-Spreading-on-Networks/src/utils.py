@@ -100,6 +100,7 @@ class Node:
         self.I = I
         self.Pop = S+I
         self.degree = None
+        self.beta = 1/(self.Pop)
 
         self.S_history = [S]
         self.I_history = [I]
@@ -118,6 +119,7 @@ class SFN:
         self.actual_degrees = np.sum(self.A, axis=0)
         self.avg_network_degree = np.mean(self.actual_degrees)
         self.fitted_gamma = fit_gamma(self.target_degrees)
+        self.I_total_history = []
 
     def populate(self, S, I):
         self.nodes = []
@@ -131,8 +133,10 @@ class SFN:
         for i in range(self.V):
             self.nodes.append(Node(S_nodes[i],I_nodes[i]))
             self.nodes[i].degree = np.sum(self.A[i,:])
-
+            self.nodes[i].beta = 1/(self.nodes[i].I+self.nodes[i].S)
         self.avg_node_population = (S+I)/self.V
+        self.I_total_history.append(I)
+
         
 
     def move_individuals(self):
@@ -149,17 +153,20 @@ class SFN:
             # Move susceptible individuals to new node
             S_move = S_move + np.random.multinomial(node.S, move_prob)
             I_move = I_move + np.random.multinomial(node.I, move_prob)
-
+        I_hist = 0
         # Add changes to actual nodes
         for n, node in enumerate(self.nodes):
             node.S = S_move[n]
             node.I = I_move[n]
             node.Pop = node.S+node.I
+            node.beta = 1/node.Pop
 
             # Save to history
             node.S_history.append(node.S)
             node.I_history.append(node.I)
             node.Pop_history.append(node.Pop)
+            I_hist = I_hist + node.I
+        self.I_total_history.append(I_hist)
 
     def plot_populations(self, out_dir:Path):
         if len(self.nodes[0].S_history)>1:
@@ -195,6 +202,17 @@ class SFN:
             plt.ylabel("Quantity")
             plt.grid()
             plt.savefig(out_dir/Path(f"population_over_time_gamma_{self.gamma}.pdf"))
+
+            plt.figure()
+            plt.title(f"Total Infected Over Time\nGamma = {self.gamma}")
+            plt.plot(range(len(self.I_total_history)), self.I_total_history, label = "Infected")
+            #plt.legend()
+            #plt.axis([0,config.steps+1,0,400])
+            plt.xlabel("Time []")
+            plt.ylabel("Quantity")
+            plt.ylim(bottom=-1)
+            plt.grid()
+            plt.savefig(out_dir/Path(f"Tot_infected_over_time_gamma_{self.gamma}.pdf"))
         else:
             print("No movement of individuals were recorded")
 
@@ -239,14 +257,12 @@ class SFN:
 
         return True, node_means
 
-    def infected_steady_state_reached(
-    self,
-    window=50,
-    rel_tol=0.05,
-    abs_tol=0.5,
-    I_rel_tol=0.02,
-    I_abs_tol=1.0):
+    def infected_steady_state_reached(self, window=50, I_rel_tol=0.02, I_abs_tol=1.0, step = 0):
+
         if len(self.nodes[0].Pop_history) < 2 * window:
+            return False, None
+
+        if step%5 == 1:
             return False, None
 
         # Individual node steady-state estimates
@@ -254,29 +270,6 @@ class SFN:
             np.mean(node.Pop_history[-window:])
             for node in self.nodes
         ])
-
-        # Check population diffusion by degree group
-        for k in np.unique(self.actual_degrees):
-
-            nodes_k = [
-                node for node in self.nodes
-                if node.degree == k
-            ]
-
-            old_mean = np.mean([
-                np.mean(node.Pop_history[-2*window:-window])
-                for node in nodes_k
-            ])
-
-            new_mean = np.mean([
-                np.mean(node.Pop_history[-window:])
-                for node in nodes_k
-            ])
-
-            threshold = abs_tol + rel_tol * new_mean
-
-            if abs(new_mean - old_mean) > threshold:
-                return False, None
 
         # Check total infected population
         old_I = np.mean(
@@ -339,6 +332,7 @@ def plot_rho_vs_k(sfn, out_dir):
 
 
 
+
 class State:
     INFECTED = 1
     SUSCEPTIBLE = 0
@@ -361,7 +355,7 @@ def infected_to_susceptible(mask_infected,  N, mu, dt, rng):
 
 
 #Stochastic infection
-def stochastic_state(SFN: SFN = None , beta = 0, mu = 0, timestep = 0):
+def stochastic_state(SFN: SFN = None , beta = None, mu = 0, timestep = 0):
     #STATE CHANGER
     rng = np.random.default_rng()
     for node in SFN.nodes:
@@ -372,9 +366,12 @@ def stochastic_state(SFN: SFN = None , beta = 0, mu = 0, timestep = 0):
 
         mask_susceptible = individuals == State.SUSCEPTIBLE
         mask_infected = individuals == State.INFECTED
+        if beta == None:
+            new_infected = susceptible_to_infected(mask_susceptible, N, node.beta, timestep, rng)
+        else:
+            new_infected = susceptible_to_infected(mask_susceptible, N, beta, timestep, rng)
 
         new_susceptible = infected_to_susceptible(mask_infected, N, mu, timestep, rng)
-        new_infected = susceptible_to_infected(mask_susceptible, N, beta, timestep, rng)
 
         individuals[new_infected] = State.INFECTED
         individuals[new_susceptible] = State.SUSCEPTIBLE
