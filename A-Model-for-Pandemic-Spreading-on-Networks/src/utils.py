@@ -388,6 +388,7 @@ def stochastic_state(SFN: SFN = None , beta = 0, mu = 0, timestep = 0):
 
 def plot_rel_infect_vs_init_rho(sfn_list, out_dir):
     plt.figure()
+    plt.title(f"Steady State Infected Proportion \nDependency on Rho")
     V = []
     rho = []
     I_pop_rels = []
@@ -407,11 +408,11 @@ def plot_rel_infect_vs_init_rho(sfn_list, out_dir):
         I_group = [I_pop_rels[i] for i in range(len(V)) if v==V[i]]
 
         plt.plot(rho_group, I_group, label=f"V = {v}")
-    out_file = out_dir / Path("rel_infect_vs_init_rho.pdf")
+    out_file = out_dir / Path(f"rel_infect_vs_init_rho_gamma_{sfn_list[0].gamma}.pdf")
     plt.legend()
     plt.grid()
     plt.xlabel("Average Initial Population Per Node")
-    plt.ylabel("Porportion of Total Population Which is Infected")
+    plt.ylabel("Proportion of Total Population Which is Infected")
 
     plt.savefig(out_file)
 
