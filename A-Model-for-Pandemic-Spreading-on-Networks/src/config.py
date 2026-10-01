@@ -5,7 +5,7 @@ SHOW_PLOTS = 0
 ## Reaction Diffusion SIS ##
 
 mus =   [4   , 4    , 4   ]    # Recovery rate [per day]
-betas = [8/32, 10/32, 6/32]      # Infection rate [per day]
+betas = [8/32, 10/32, 6/32]    # Infection rate [per day]
 
 initial_infected = 2
 initial_susceptible = 30

@@ -13,6 +13,7 @@ fig_dir.mkdir(parents=True, exist_ok=True)
 
 t_span_rdIS = [0,config.days_simulated*config.seconds_per_day] # seconds
 y0_rdIS = [config.initial_infected,config.initial_susceptible]
+N = config.initial_infected+config.initial_susceptible
 
 mus_seconds = np.array(config.mus)/config.seconds_per_day
 betas_seconds = np.array(config.betas)/config.seconds_per_day
@@ -32,5 +33,5 @@ for mu, beta in zip(mus_seconds, betas_seconds):
     t = np.linspace(t_span_rdIS[0], t_span_rdIS[1], 1000)
     y = sol.sol(t)
 
-    utils.plot_sim1(t,y,mu,beta,spd=config.seconds_per_day, fig_dir=fig_dir, show_plots=config.SHOW_PLOTS)
+    utils.plot_sim1(t,y,mu,beta,N,spd=config.seconds_per_day, fig_dir=fig_dir, show_plots=config.SHOW_PLOTS)
 
