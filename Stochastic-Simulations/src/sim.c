@@ -103,6 +103,7 @@ double *run_simulation(Par *par, double *atoms)
     printf("Gas with %d particles at rho = %g, T = %g, alpha = %g, deltat = %g, L = %5.3f\n",
 	   par->n, par->rho, par->T, par->alpha, par->deltat, par->L[0]);
 #endif
+	***/
 
     
   /*** 2. Initialize ***/
@@ -155,8 +156,8 @@ double *run_simulation(Par *par, double *atoms)
 #ifdef VEL
   printf("Kinetic energy = %g\n", val->ekin);
 #endif
-  printf("...exiting\n");
-  exit(EXIT_SUCCESS);	// Fix this (2): remove printf and exit statements
+  //printf("...exiting\n");
+  //exit(EXIT_SUCCESS);	// Fix this (2): remove printf and exit statements
 
   step(par, atoms, force);	// Fix this (3): remove printf and exit statements
   printf("x, y, vx, vy = %g  %g  %g  %g\n", pos[0], pos[1], vel[0], vel[1]);

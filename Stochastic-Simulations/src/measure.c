@@ -24,9 +24,12 @@ void measure(Par *par, double *atoms, Measured *val)
 
   // Potential energy
   for (i = 0; i < par->n; i++) {
+	double *ipos = pos + D * i;
     for (j = i + 1; j < par->n; j++) {
       // Calculate distance squared between particles i and j
       // Fix this (1)  r2 = dist2( ... );	// The function dist2 is in "common.c"
+	  double *jpos = pos + D * j;
+	  r2 = dist2(par->L, ipos, jpos, dist);
       if (r2 < CUT * CUT) {
 	epot += pair_interaction(r2);
 	virial += sqrt(r2) * force_magnitude(r2);
