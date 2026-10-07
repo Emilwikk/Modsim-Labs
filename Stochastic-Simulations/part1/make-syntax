@@ -1,0 +1,5 @@
+# Things that should be put into Makefile:
+CC=gcc
+LOADLIBES=-lm
+
+hello-split: hello-split.o hello-print.o
