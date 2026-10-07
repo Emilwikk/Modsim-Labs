@@ -160,9 +160,9 @@ double *run_simulation(Par *par, double *atoms)
   //exit(EXIT_SUCCESS);	// Fix this (2): remove printf and exit statements
 
   step(par, atoms, force);	// Fix this (3): remove printf and exit statements
-  printf("x, y, vx, vy = %g  %g  %g  %g\n", pos[0], pos[1], vel[0], vel[1]);
-  printf("...exiting\n");
-  exit(EXIT_SUCCESS);
+  //printf("x, y, vx, vy = %g  %g  %g  %g\n", pos[0], pos[1], vel[0], vel[1]);
+  //printf("...exiting\n");
+  //exit(EXIT_SUCCESS);
   /*** Remove up to this line after completing the initial steps of the lab ***/
 
   
