@@ -64,6 +64,7 @@ void vel_from_force(Par *par, double *vel, double *force)
   for (i = 0; i < par->n; i++) {
     for (d = 0; d < D; d++) {
    // Fix this (2):   vel[D * i + d] += ...;
+   	  vel[D * i + d] += par->deltat * (force[D * i + d] / par->mass);
     }
   }
 }
