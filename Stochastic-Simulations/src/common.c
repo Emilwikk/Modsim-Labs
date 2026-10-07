@@ -30,14 +30,17 @@ double pair_interaction(double r2)
   if (r2 > CUT * CUT)
     return 0.0;
 
-  // Fix this (1): return ...
+  // Use r2 instead of r and just adjust the powers
+  double u_LJ_r = 4*(pow((1/r2),6)-pow((1/r2),3));
+  //double u_LJ_rc = 4*(pow((1/CUT),12)-pow((1/CUT),6));
+  return u_LJ_r; //-u_LJ_rc;
 }
 
 // The magnitude of the force from Eq (2).
 double force_magnitude(double r2)
 {
   double r = sqrt(r2);
-  double force;
+  double force = 1/r * (48*pow((1/r),12)-24*pow((1/r),6));
   // Fix this (2): force = ...
   return force;
 }
@@ -54,6 +57,10 @@ void one_force(double *f, double r2, double *dist)
   int d;
   double force = force_magnitude(r2);
   // Fix this (2): split the force up in the different directions
+  int r = sqrt(r2);
+  for (d = 0; d < D; d++) {
+    f[d] = (dist[d]/r)* force;
+  }
 }
 
 
