@@ -1,13 +1,13 @@
 ## Global ##
+import numpy as np
 seconds_per_day = 24*60*60
 SHOW_PLOTS = 0
 
 ## Reaction Diffusion SIS ##
 
 mus =   [4   , 4    , 4   ]    # Recovery rate [per day]
-betas = [8/32, 10/32, 6/32]      # Infection rate [per day]
-
-initial_infected = 2
+betas = [32/1000, 32/1000, 32/1000]      # Infection rate [per day]
+initial_infected = 10
 initial_susceptible = 30
 
 days_simulated = 5
@@ -33,14 +33,15 @@ I_dan = 30000
 
 mu5 = 2
 beta5 = 1
-gamma5 = -3.5
-mu5_2 = 0.5
-gamma5_2 = -1.5
+gamma5_1 = -1.5
+mu5_betai = 0.5
+gamma5_2 = -3.5
+gamma_betai = -1.5
 
 
-V_list = [1000, 5000, 10000]
+V_list = [5000]
 rho_min = 0.1
-rho_max = 2
-n_rhos = 8
+rho_max = 10
+n_rhos = 20
 
 init_proportion_infected = 0.1

@@ -357,6 +357,7 @@ def infected_to_susceptible(mask_infected,  N, mu, dt, rng):
 #Stochastic infection
 def stochastic_state(SFN: SFN = None , beta = None, mu = 0, timestep = 0):
     #STATE CHANGER
+
     rng = np.random.default_rng()
     for node in SFN.nodes:
         N = node.I + node.S
@@ -383,11 +384,12 @@ def stochastic_state(SFN: SFN = None , beta = None, mu = 0, timestep = 0):
         node.I = nmb_infected
     return 
 
-def plot_rel_infect_vs_init_rho(sfn_list, out_dir):
+def plot_rel_infect_vs_init_rho(sfn_list, out_dir, gamma, mu, beta):
     plt.figure()
-    plt.title(f"Steady State Infected Proportion \nDependency on Rho")
+    plt.title(f"Dependency on Rho \n gamma:{gamma}, mu:{mu}, beta:{beta} ")
     V = []
     rho = []
+    linestyles = ["solid", (0,(1,1)), "dashdot"]
     I_pop_rels = []
     for sfn in sfn_list:
         V.append(sfn.V)
@@ -400,12 +402,12 @@ def plot_rel_infect_vs_init_rho(sfn_list, out_dir):
         I_pop_rels.append((I_tot/sfn.V)/sfn.avg_node_population) 
 
     # Group by V for plotting
-    for v in np.unique(V):
+    for i, v in enumerate(np.unique(V)):
         rho_group = [rho[i] for i in range(len(V)) if v==V[i]]
         I_group = [I_pop_rels[i] for i in range(len(V)) if v==V[i]]
 
-        plt.plot(rho_group, I_group, label=f"V = {v}")
-    out_file = out_dir / Path(f"rel_infect_vs_init_rho_gamma_{sfn_list[0].gamma}.pdf")
+        plt.plot(rho_group, I_group, label=f"V = {v}", linestyle = linestyles[i])
+    out_file = out_dir / Path(f"rho_plot_gamma_{gamma}_mu_{mu}_beta_{beta}.pdf")
     plt.legend()
     plt.grid()
     plt.xlabel("Average Initial Population Per Node")
