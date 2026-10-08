@@ -31,8 +31,8 @@ void measure(Par *par, double *atoms, Measured *val)
 	  double *jpos = pos + D * j;
 	  r2 = dist2(par->L, ipos, jpos, dist);
       if (r2 < CUT * CUT) {
-	epot += pair_interaction(r2);
-	virial += sqrt(r2) * force_magnitude(r2);
+	    epot += pair_interaction(r2);
+	    virial += sqrt(r2) * force_magnitude(r2);
       }
     }
   }
@@ -60,6 +60,7 @@ void measure(Par *par, double *atoms, Measured *val)
 #endif
 
   val->etot = etot;
+  val->etot2 = etot*etot;
 
   return;
 }

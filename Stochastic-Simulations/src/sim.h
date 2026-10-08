@@ -6,7 +6,7 @@
 #define FNAMESIZE 100
 
 typedef struct Measured {
-  double epot, etot, pressure;
+  double epot, etot, etot2, pressure;
   // Fix this (4). Introduce variable for total energy squared
 #ifdef VEL
   double ekin;

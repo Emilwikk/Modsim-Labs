@@ -7,8 +7,12 @@
 
 double standard_error(double x, double x2, int nblock)
 {
-  return 0.0;
-  //  Fix this (4). Calculate and return the standard error
+  // Avg 
+  double X = x/nblock;
+  double X2 = x2/nblock;
+  double stderr = sqrt((X2-X*X)/(nblock-1));
+
+  return stderr;
 }
 
 
@@ -234,8 +238,15 @@ double *run_simulation(Par *par, double *atoms)
 #ifdef VEL
   print_standard_error("Kinetic E  : ", v1sum->ekin, v2sum->ekin, par->nblock);
   // Fix this (4): Print out total energy with standard error
+
 #endif
   // Fix this (4): calculate and print out \sigma_E = sqrt(<E^2> - <E>^2)
+  double avg_E = v1sum->etot / par->nblock;
+  double avg_E2 = v1sum->etot2 / par->nblock;
+
+  double sigma_E = sqrt(avg_E2 - avg_E*avg_E);
+
+  printf("Energy fluctuations: %g\n", sigma_E);
 
 #ifdef MC
   printf("Acceptance ratio = %g\n", naccept / (par->n * 1.0 * par->nsamp * par->nblock));

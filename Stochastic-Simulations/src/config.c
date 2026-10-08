@@ -113,7 +113,7 @@ double *read_conf(Par *par, double *atoms, char *name, int just_attempting)
 
   char *lineptr = NULL;
   size_t linelen;
-  ssize_t bytes = getline(&lineptr, &linelen, stream);
+  size_t bytes = getline(&lineptr, &linelen, stream);
   //  printf("Written %ld char to address %x\n", linelen, lineptr);
   
   num = sscanf(lineptr, "%c %d %d  %lf  %lf  %lf", &hash, &n0, &df0, &rho0, &t0, &L0);
