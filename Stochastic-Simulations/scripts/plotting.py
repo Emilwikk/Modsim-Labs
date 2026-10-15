@@ -17,6 +17,9 @@ def read_conf(inPath: Path):
     params = dict(zip(["N", "unknown1", "rho", "T", "unknown2"], values))
     # Get dt from file name
     params["dt"] = int(inPath.name.split("_dt")[-1]) / 1000
+
+    # Get alpha from file name
+    params["alpha"] = float(inPath.name.split("alpha")[-1].split("_"))
     
     df = pd.read_csv(inPath,
                 sep=r"\s+", # Interpret every space (or multiple spaces) as separator
