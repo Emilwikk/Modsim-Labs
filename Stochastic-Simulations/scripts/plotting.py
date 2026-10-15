@@ -11,11 +11,12 @@ print(this_dir)
 def read_conf(inPath: Path):
 
     # Read parameters from top comment of file
-    params = {}
     with open(inPath, "r") as f:
-       params = list(map(float, f.readline().lstrip("#").split()))
+       values = list(map(float, f.readline().lstrip("#").split()))
 
-    dt = int(inPath.name.split("_dt")[-1]) / 1000
+    params = dict(zip(["N", "unknown1", "rho", "T", "unknown2"], values))
+    # Get dt from file name
+    params["dt"] = int(inPath.name.split("_dt")[-1]) / 1000
     
     df = pd.read_csv(inPath,
                 sep=r"\s+", # Interpret every space (or multiple spaces) as separator
@@ -31,7 +32,7 @@ df, params = read_conf(inPath)
 print(df.head())
 print(params)
 plt.figure()
-plt.plot(df["x"],np.linspace(0, 0.1, len(df["x"])))
+plt.scatter(df["x"],df["y"])
 plt.show()
 
 
