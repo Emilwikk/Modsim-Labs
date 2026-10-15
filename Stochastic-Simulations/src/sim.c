@@ -404,7 +404,7 @@ int main(int argc, char *argv[])
   par.b = 0.4;
 #else
   par.alpha = 0.0;
-  par.deltat = 0.01;
+  par.deltat = 0.1;
 #endif
 
   // Print information text if the program is started without arguments (i.e. argc==1).
