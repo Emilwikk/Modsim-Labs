@@ -45,12 +45,17 @@ void forces_from_pos(Par *par, double *pos, double *force)
 void langevin_forces(Par *par, double *vel, double *force)
 {
   int i, d;
-  // Fix this (5):  double Clang = 
-
+  // Fix this (5):  double Clang =
+  double Clang = sqrt((6*par->alpha*par->T) / par->deltat);
+  double xi, noise;
   for (i = 0; i < par->n; i++)
     for (d = 0; d < D; d++) {
       // Fix this (5). Use dran_sign() which returns a value between -1 and 1.
       // Fix this (5):   force[D * i + d] += ???;
+      xi = dran_sign();
+      noise = Clang*xi;
+      force[D * i + d] +=  -par->alpha * vel[D * i + d] + noise; 
+      
   }
 }
 

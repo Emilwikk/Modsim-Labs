@@ -49,3 +49,11 @@ Thumbs.db
 
 # Results
 A-Model-for-Pandemic-Spreading-on-Networks/results
+
+# Outputs
+*.o 
+#Stochastic-Simulations/lang/conf
+conf/
+#Stochastic-Simulations/lang/efile
+efile/
+Stochastic-Simulations/lang/sim
