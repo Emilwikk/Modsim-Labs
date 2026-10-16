@@ -301,38 +301,45 @@ def plot_SFNs_degrees(SFNs,fig_dir):
     for sfn in SFNs:
         degrees = sfn.target_degrees
         values, counts = np.unique(degrees,return_counts=True)
-        plt.scatter(np.log(values),np.log(counts), label=f"gamma={sfn.gamma}")
 
-        plt.plot(np.log(values) ,sfn.fitted_intersec + sfn.fitted_gamma*np.log(values))
+        # Plot # of occurances of degrees
+        plt.scatter(values,np.log(counts), label=f"gamma={sfn.gamma}")
+
+        # Plot fit
+        plt.plot(values ,sfn.fitted_intersec + sfn.fitted_gamma*np.log(values))
+
     plt.title(f"Degree Distributions for SFNs with \nVarying Power Law Gammas")
     plt.xlabel("Degree")
-    plt.ylabel("# Occurrances Logged")
+    plt.ylabel("# Occurrances Logarithmized")
     plt.grid()
     plt.legend()
 
     plt.savefig(fig_dir)
 
-def plot_rho_vs_k(sfn, out_dir):
-    unique_k = np.unique(sfn.actual_degrees)
-
-    rho_measured = []
-    rho_theory = []
-
-    for k in unique_k:
-        populations = [sfn.steady_state[i] for i, node in enumerate(sfn.nodes) if node.degree==k]
-        rho_measured.append(np.mean(populations))
-
-        rho_theory.append(k/sfn.avg_network_degree*sfn.avg_node_population)
+def plot_rho_vs_k(SFNs, out_dir):
 
     plt.figure()
     plt.title("Average populations per node depending on degree")
-    plt.scatter(unique_k, rho_measured, label="Measured avg. populations")
-    plt.plot(unique_k, rho_theory, label="Theoretical avg. populations")
     plt.xlabel("Degree k")
     plt.ylabel("Population")
+    
+
+    for sfn in SFNs:
+        rho_measured = []
+        rho_theory = []
+        unique_k = np.unique(sfn.actual_degrees)
+        for k in unique_k:
+            populations = [sfn.steady_state[i] for i, node in enumerate(sfn.nodes) if node.degree==k]
+            rho_measured.append(np.mean(populations))
+
+            rho_theory.append(k/sfn.avg_network_degree*sfn.avg_node_population)
+
+        plt.scatter(unique_k, rho_measured, label=f"gamma={sfn.gamma}:Measured avg. populations")
+        plt.plot(unique_k, rho_theory, label=f"gamma={sfn.gamma}:Theoretical avg. populations")
+        
     plt.legend()
     plt.grid()
-    plt.savefig(out_dir/Path(f"pop_vs_degree_gamma_{sfn.gamma}.pdf"))
+    plt.savefig(out_dir/Path(f"pop_vs_degree.pdf"))
 
 
 
