@@ -92,9 +92,9 @@ def powerlaw_adjacency_matrix(V, gamma):
 def fit_gamma(degrees):
 
     degree, count = np.unique(degrees,return_counts=True)
-    slope,inter = np.polyfit(np.log(degree),np.log(count),deg=1)
+    slope,intersec = np.polyfit(np.log(degree),np.log(count),deg=1)
     fitted_gamma = slope
-    return fitted_gamma
+    return fitted_gamma, intersec
 
 class Node:
     def __init__(self,S,I):
@@ -120,7 +120,7 @@ class SFN:
         self.target_degrees = target_degrees
         self.actual_degrees = np.sum(self.A, axis=0)
         self.avg_network_degree = np.mean(self.actual_degrees)
-        self.fitted_gamma = fit_gamma(self.target_degrees)
+        self.fitted_gamma, self.fitted_intersec = fit_gamma(self.target_degrees)
         self.I_total_history = []
 
     def populate(self, S, I):
@@ -301,10 +301,12 @@ def plot_SFNs_degrees(SFNs,fig_dir):
     for sfn in SFNs:
         degrees = sfn.target_degrees
         values, counts = np.unique(degrees,return_counts=True)
-        plt.plot(values,counts, label=f"gamma={sfn.gamma}")
+        plt.scatter(np.log(values),np.log(counts), label=f"gamma={sfn.gamma}")
+
+        plt.plot(np.log(values) ,sfn.fitted_intersec + sfn.fitted_gamma*np.log(values))
     plt.title(f"Degree Distributions for SFNs with \nVarying Power Law Gammas")
     plt.xlabel("Degree")
-    plt.ylabel("# Occurrances")
+    plt.ylabel("# Occurrances Logged")
     plt.grid()
     plt.legend()
 
