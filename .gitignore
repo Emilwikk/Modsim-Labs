@@ -52,8 +52,11 @@ A-Model-for-Pandemic-Spreading-on-Networks/results
 
 # Outputs
 *.o 
-#Stochastic-Simulations/lang/conf
-conf/
-#Stochastic-Simulations/lang/efile
+
+# Ignore everything inside conf/
+**/conf/*
+# Except the starting configuration
+!**/conf/*start
+
 efile/
 Stochastic-Simulations/lang/sim
