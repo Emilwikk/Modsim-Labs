@@ -212,7 +212,7 @@ double *run_simulation(Par *par, double *atoms)
 
       // Measure all kinds of things and accumulate results (file: measure.c).
       measure(par, atoms, val);
-      if (isamp % 100 == 0)	// Write energy from a single measurement to file, but not too often
+      //if (isamp % 100 == 0)	// Write energy from a single measurement to file, but not too often
 	fprintf(estream, "%g\n", val->etot);
 
       // Accumulate values val->xxx into vblock->xxx
