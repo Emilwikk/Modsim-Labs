@@ -85,12 +85,31 @@ void pos_from_vel(Par *par, double *pos, double *vel)
   for (i = 0; i < par->n; i++) {
     for (d = 0; d < D; d++) {
       double newpos = pos[D * i + d] + par->deltat * vel[D * i + d];
-      pos[D * i + d] = inrange(newpos, par->L[d]);
+      pos[D * i + d] = inrange(newpos, par->L[d
+      ]);
     }
   }
 }
 #endif
 
+
+#ifdef BROWN
+void pos_from_force(Par* par, double *pos, double *force)
+{
+int i, d;
+double xi, noise, newpos;
+double eta = sqrt(3*2*par->T/(par->alpha*par->deltat));
+
+  for (i = 0; i < par->n; i++) {
+    for (d = 0; d < D; d++) {
+      xi = dran_sign();
+      noise = eta*xi;
+      newpos = pos[D * i + d] + force[D * i + d]*(par->deltat/par->alpha) + noise*par->deltat;
+      pos[D * i + d] = inrange(newpos, par->L[d]);
+    }
+  }
+}
+#endif
   
 
 
@@ -120,6 +139,7 @@ int step(Par *par, double *atoms, double *force)
 #ifdef BROWN
   // Brownian dynamics goes here
   pos_from_force(par, pos, force);
+
 #endif
   
   return 0;
