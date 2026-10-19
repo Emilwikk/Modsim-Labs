@@ -5,7 +5,6 @@ from matplotlib import pyplot as plt
 import pandas as pd
 
 this_dir = Path(__file__).resolve().parent
-print(this_dir)
 
 
 def read_conf(inPath: Path):
