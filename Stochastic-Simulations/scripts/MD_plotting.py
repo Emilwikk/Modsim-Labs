@@ -36,11 +36,17 @@ def read_efile(inPath: Path):
     params = {}
 
     # Get dt from file name
-    params["dt"] = int(inPath.name.split("_dt")[-1]) / 1000
+    if "_dt" in inPath.name:
+        params["dt"] = int(inPath.name.split("_dt")[-1]) / 1000
+    else:
+        params["dt"] = None
 
     # Get alpha from file name
-    params["alpha"] = float(inPath.name.split("alpha")[-1].split("_dt")[0])
-    
+    if "alpha" in inPath.name:
+        params["alpha"] = float(inPath.name.split("alpha")[-1].split("_dt")[0])
+    else:
+        params["alpha"] = None
+        
     df = pd.read_csv(inPath,
                 sep=r"\s+", # Interpret every space (or multiple spaces) as separator
                 comment="#",
