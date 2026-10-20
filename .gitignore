@@ -60,5 +60,7 @@ A-Model-for-Pandemic-Spreading-on-Networks/results
 
 efile/
 Stochastic-Simulations/lang/sim
+Stochastic-Simulations/brown/sim
+Stochastic-Simulations/mc/sim
 
 **/results/
