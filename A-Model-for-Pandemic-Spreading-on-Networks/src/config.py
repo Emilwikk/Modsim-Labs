@@ -19,7 +19,7 @@ days_simulated = 5
 
 # Multiplier which increases population relative to that of 'Reaction Diffusion SIS' while keeping system 
 # behaviour conserved
-pop_mult = 40
+pop_mult = 10
 
 ## Scale Free Networks ##
 

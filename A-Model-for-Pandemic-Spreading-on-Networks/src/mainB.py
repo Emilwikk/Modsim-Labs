@@ -98,7 +98,6 @@ for i, (mu, beta) in enumerate(zip(mus_days, betas_days)):
     nmb_susceptible = np.zeros((time.shape))
     nmb_infected = np.zeros((time.shape))
 
-
     steady_state = None
     for j, sloppy in enumerate(time):
         # STEADY STATE CHECKER
@@ -122,12 +121,12 @@ for i, (mu, beta) in enumerate(zip(mus_days, betas_days)):
         individuals[new_infected] = State.INFECTED
         individuals[new_susceptible] = State.SUSCEPTIBLE
 
-        rel_infected = nmb_infected/N
-        rel_susceptible = nmb_susceptible/N
+    
+    rel_infected = nmb_infected/N
+    rel_susceptible = nmb_susceptible/N
 
-        rel_inf_list.append(rel_infected)
-        rel_sus_list.append(rel_susceptible)
-
+    rel_inf_list.append(rel_infected)
+    rel_sus_list.append(rel_susceptible)
 
     f1 = y[i]
     spd=config.seconds_per_day
