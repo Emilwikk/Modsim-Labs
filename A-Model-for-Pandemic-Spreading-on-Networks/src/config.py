@@ -14,6 +14,13 @@ initial_susceptible = 30
 days_simulated = 5
 
 
+## Stochastic Simulations ##
+
+
+# Multiplier which increases population relative to that of 'Reaction Diffusion SIS' while keeping system 
+# behaviour conserved
+pop_mult = 40
+
 ## Scale Free Networks ##
 
 # Number of nodes
